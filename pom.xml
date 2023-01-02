@@ -6,7 +6,7 @@
 
     <groupId>com.it</groupId>
     <artifactId>Stopwatch</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>Stopwatch</name>
 
     <properties>
