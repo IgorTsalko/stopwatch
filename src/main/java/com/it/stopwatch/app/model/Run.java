@@ -1,8 +1,11 @@
 package com.it.stopwatch.app.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Run {
+public class Run implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Integer number;
     private String name;

@@ -1,7 +1,7 @@
 package com.it.stopwatch.service.exporter;
 
+import com.it.stopwatch.app.exception.StopwatchException;
 import com.it.stopwatch.app.model.Run;
-import com.it.stopwatch.context.ApplicationContext;
 import javafx.scene.control.TableView;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -44,7 +44,6 @@ public class ExcelExporter {
             fileOutputStream.close();
             hssfWorkbook.close();
         } catch (IOException e) {
-            ApplicationContext.getErrorLabel().setText("Ошибка при сохранении файлав Excel");
-        }
+            throw new StopwatchException("Ошибка при сохранении файла в Excel", e);}
     }
 }

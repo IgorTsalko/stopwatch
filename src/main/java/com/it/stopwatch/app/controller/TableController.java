@@ -1,11 +1,13 @@
 package com.it.stopwatch.app.controller;
 
+import com.it.stopwatch.app.exception.StopwatchException;
 import com.it.stopwatch.app.exception.ValidationException;
 import com.it.stopwatch.app.handler.CellEditHandler;
 import com.it.stopwatch.app.handler.TimeCellEditHandler;
 import com.it.stopwatch.app.model.Run;
 import com.it.stopwatch.context.ApplicationContext;
 import com.it.stopwatch.service.RunService;
+import com.it.stopwatch.service.StorageService;
 import com.it.stopwatch.service.exporter.ExcelExporter;
 import com.it.stopwatch.service.util.LabelUtil;
 import javafx.collections.ObservableList;
@@ -21,6 +23,7 @@ import javafx.stage.Window;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class TableController implements Initializable {
@@ -63,12 +66,14 @@ public class TableController implements Initializable {
 
     private final RunService runService;
     private final ExcelExporter excelExporter;
+    private final StorageService storageService;
 
     public TableController() {
         errorLabel = ApplicationContext.getErrorLabel();
 
         this.runService = ApplicationContext.getRunService();
         this.excelExporter = ApplicationContext.getExcelExporter();
+        this.storageService = ApplicationContext.getStorageService();
     }
 
     @Override
@@ -153,19 +158,65 @@ public class TableController implements Initializable {
     void exportTable(ActionEvent event) {
         if (!tableView.getItems().isEmpty()) {
             FileChooser fileChooser = new FileChooser();
-
-            String desktopPath = System.getProperty("user.home") + "/Desktop";
-            fileChooser.setInitialDirectory(new File(desktopPath));
+            fileChooser.setInitialDirectory(new File(ApplicationContext.getDesktopPath()));
             fileChooser.getExtensionFilters()
-                    .add(new FileChooser.ExtensionFilter("Excel file", "*.xls", "*.xlsx"));
+                    .add(new FileChooser.ExtensionFilter("Excel файл", "*.xls", "*.xlsx"));
 
             Window stage = ((MenuItem) event.getSource()).getParentPopup().getOwnerWindow();
-            File selectedDirectory = fileChooser.showSaveDialog(stage);
-            excelExporter.export(tableView, selectedDirectory);
+            File selectedFile = fileChooser.showSaveDialog(stage);
 
-            LabelUtil.clearLabel(errorLabel);
+            try {
+                excelExporter.export(tableView, selectedFile);
+                LabelUtil.clearLabel(errorLabel);
+            } catch (StopwatchException e) {
+                errorLabel.setText(e.getMessage());
+            }
         } else {
             errorLabel.setText("Таблица пустая. Добавьте записи чтобы сохранить!");
+        }
+    }
+
+    @FXML
+    void saveTable(ActionEvent event) {
+        if (!tableView.getItems().isEmpty()) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialDirectory(new File(ApplicationContext.getDesktopPath()));
+            fileChooser.getExtensionFilters()
+                    .add(new FileChooser.ExtensionFilter("Text файл", "*.txt"));
+
+            Window stage = ((MenuItem) event.getSource()).getParentPopup().getOwnerWindow();
+            File selectedFile = fileChooser.showSaveDialog(stage);
+
+            try {
+                storageService.saveRuns(tableView.getItems(), selectedFile);
+                LabelUtil.clearLabel(errorLabel);
+            } catch (StopwatchException e) {
+                errorLabel.setText(e.getMessage());
+            }
+        } else {
+            errorLabel.setText("Таблица пустая. Добавьте записи чтобы сохранить!");
+        }
+    }
+
+    @FXML
+    void loadTable(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        String desktopPath = System.getProperty("user.home") + "/Desktop";
+        fileChooser.setInitialDirectory(new File(desktopPath));
+        fileChooser.getExtensionFilters()
+                .add(new FileChooser.ExtensionFilter("Text файл", "*.txt"));
+
+        Window stage = ((MenuItem) event.getSource()).getParentPopup().getOwnerWindow();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+
+        try {
+            List<Run> runs = storageService.loadRuns(selectedFile);
+            ObservableList<Run> currentRuns = tableView.getItems();
+            currentRuns.clear();
+            currentRuns.addAll(runs);
+            LabelUtil.clearLabel(errorLabel);
+        } catch (StopwatchException e) {
+            errorLabel.setText(e.getMessage());
         }
     }
 }
