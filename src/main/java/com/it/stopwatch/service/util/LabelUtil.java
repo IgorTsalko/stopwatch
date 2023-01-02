@@ -1,4 +1,4 @@
-package com.it.stopwatch.util;
+package com.it.stopwatch.service.util;
 
 import javafx.scene.control.Label;
 

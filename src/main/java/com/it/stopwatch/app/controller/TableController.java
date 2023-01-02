@@ -6,19 +6,20 @@ import com.it.stopwatch.app.handler.TimeCellEditHandler;
 import com.it.stopwatch.app.model.Run;
 import com.it.stopwatch.context.ApplicationContext;
 import com.it.stopwatch.service.RunService;
-import com.it.stopwatch.util.LabelUtil;
+import com.it.stopwatch.service.exporter.ExcelExporter;
+import com.it.stopwatch.service.util.LabelUtil;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -61,10 +62,13 @@ public class TableController implements Initializable {
     private TextField penaltyInput;
 
     private final RunService runService;
+    private final ExcelExporter excelExporter;
 
     public TableController() {
-        this.runService = ApplicationContext.getRunService();
         errorLabel = ApplicationContext.getErrorLabel();
+
+        this.runService = ApplicationContext.getRunService();
+        this.excelExporter = ApplicationContext.getExcelExporter();
     }
 
     @Override
@@ -143,5 +147,25 @@ public class TableController implements Initializable {
         runs.remove(selectedIndex);
         runService.populatePlaces(runs);
         tableView.refresh();
+    }
+
+    @FXML
+    void exportTable(ActionEvent event) {
+        if (!tableView.getItems().isEmpty()) {
+            FileChooser fileChooser = new FileChooser();
+
+            String desktopPath = System.getProperty("user.home") + "/Desktop";
+            fileChooser.setInitialDirectory(new File(desktopPath));
+            fileChooser.getExtensionFilters()
+                    .add(new FileChooser.ExtensionFilter("Excel file", "*.xls", "*.xlsx"));
+
+            Window stage = ((MenuItem) event.getSource()).getParentPopup().getOwnerWindow();
+            File selectedDirectory = fileChooser.showSaveDialog(stage);
+            excelExporter.export(tableView, selectedDirectory);
+
+            LabelUtil.clearLabel(errorLabel);
+        } else {
+            errorLabel.setText("Таблица пустая. Добавьте записи чтобы сохранить!");
+        }
     }
 }

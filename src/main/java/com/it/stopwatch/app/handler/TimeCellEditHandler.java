@@ -4,7 +4,7 @@ import com.it.stopwatch.app.exception.ValidationException;
 import com.it.stopwatch.app.model.Run;
 import com.it.stopwatch.context.ApplicationContext;
 import com.it.stopwatch.service.RunService;
-import com.it.stopwatch.util.LabelUtil;
+import com.it.stopwatch.service.util.LabelUtil;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 

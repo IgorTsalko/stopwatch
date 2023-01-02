@@ -20,7 +20,7 @@
      <menus>
        <Menu mnemonicParsing="false" text="Файл">
          <items>
-           <MenuItem mnemonicParsing="false" style="-fx-padding: 0 60 0 5;" text="Сохранить" />
+           <MenuItem mnemonicParsing="false" onAction="#exportTable" style="-fx-padding: 0 60 0 5;" text="Сохранить в Excel" />
          </items>
        </Menu>
        <Menu mnemonicParsing="false" text="Редактировать">

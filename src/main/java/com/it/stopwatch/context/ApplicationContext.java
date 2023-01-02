@@ -3,19 +3,21 @@ package com.it.stopwatch.context;
 import com.it.stopwatch.service.RunService;
 import com.it.stopwatch.service.TimeService;
 import com.it.stopwatch.service.converter.DurationConverter;
-import com.it.stopwatch.validator.RunValidator;
+import com.it.stopwatch.service.exporter.ExcelExporter;
+import com.it.stopwatch.service.validator.RunValidator;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class ApplicationContext {
 
-    private final static Label errorLabel;
+    private static final Label errorLabel;
 
-    private final static RunService runService;
-    private final static TimeService timeService;
-    private final static DurationConverter durationConverter;
-    private final static RunValidator runValidator;
+    private static final RunService runService;
+    private static final TimeService timeService;
+    private static final DurationConverter durationConverter;
+    private static final RunValidator runValidator;
+    private static final ExcelExporter excelExporter;
 
     static {
         errorLabel = new Label();
@@ -26,6 +28,7 @@ public class ApplicationContext {
         runValidator = new RunValidator();
         timeService = new TimeService(durationConverter);
         runService = new RunService(timeService, runValidator);
+        excelExporter = new ExcelExporter();
     }
 
     public static Label getErrorLabel() {
@@ -34,5 +37,9 @@ public class ApplicationContext {
 
     public static RunService getRunService() {
         return runService;
+    }
+
+    public static ExcelExporter getExcelExporter() {
+        return excelExporter;
     }
 }

@@ -1,7 +1,7 @@
 package com.it.stopwatch.service;
 
 import com.it.stopwatch.app.model.Run;
-import com.it.stopwatch.validator.RunValidator;
+import com.it.stopwatch.service.validator.RunValidator;
 import javafx.collections.ObservableList;
 
 import java.util.Comparator;

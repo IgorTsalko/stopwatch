@@ -1,4 +1,4 @@
-package com.it.stopwatch.validator;
+package com.it.stopwatch.service.validator;
 
 import com.it.stopwatch.app.exception.ValidationException;
 import com.it.stopwatch.app.model.Run;
